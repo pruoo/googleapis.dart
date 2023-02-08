@@ -791,6 +791,33 @@ class ProjectsDatabasesDocumentsResource {
         _response as core.Map<core.String, core.dynamic>);
   }
 
+  // Custom function created to solve batchGet issue [Link](https://github.com/google/googleapis.dart/issues/504)
+  async.Future<core.List<BatchGetDocumentsResponse>> batchGetFix(
+    BatchGetDocumentsRequest request,
+    core.String database, {
+    core.String? $fields,
+  }) async {
+    final _body = convert.json.encode(request);
+    final _queryParams = <core.String, core.List<core.String>>{
+      if ($fields != null) 'fields': [$fields],
+    };
+
+    final _url =
+        'v1/' + core.Uri.encodeFull('$database') + '/documents:batchGet';
+
+    final _response = await _requester.request(
+      _url,
+      'POST',
+      body: _body,
+      queryParams: _queryParams,
+    );
+    final _responseData = _response as core.List<core.dynamic>;
+    return _responseData
+        .map((e) => BatchGetDocumentsResponse.fromJson(
+            e as core.Map<core.String, core.dynamic>))
+        .toList();
+  }
+
   /// Applies a batch of write operations.
   ///
   /// The BatchWrite method does not apply the write operations atomically and
